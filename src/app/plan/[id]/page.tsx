@@ -1,31 +1,45 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { useParams, useRouter, useSearchParams } from "next/navigation";
-import { useEffect } from "react";
+import { useParams, useRouter } from "next/navigation";
+import {
+  MapPin,
+  Clock,
+  ChevronRight,
+  Sun,
+  Cloud,
+  Waves,
+  Wind,
+  Calendar,
+  Users,
+  ArrowLeft,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { MapPin, Clock, Image as ImageIcon } from "lucide-react";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardFooter,
+} from "@/components/ui/card";
 import { ProgressBar } from "@/components/atoms/progressbar";
-import { Itinerary, ItineraryItem } from "@/lib/types";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
+import { Skeleton } from "@/components/ui/skeleton";
+import Layout from "@/components/layout";
+import Header from "@/components/ui/header";
+import { UserButton } from "@clerk/nextjs";
 
-async function fetchItinerary(id: string): Promise<Itinerary> {
-  const response = await fetch(`http://localhost:8080/api/v1/plan/${id}`, {
-    headers: { "Content-Type": "application/json" },
-  });
-  if (!response.ok) {
-    throw new Error("Failed to fetch itinerary");
-  }
+async function fetchItinerary(id: string) {
+  const response = await fetch(`http://localhost:8080/api/v1/plan/${id}`);
+  if (!response.ok) throw new Error("Failed to fetch itinerary");
   return response.json();
 }
 
-export default function PreviewPage() {
+export default function CruiseStyleItinerary() {
   const router = useRouter();
   const params = useParams();
-  // const searchParams = useSearchParams();
-  // const itineraryId = searchParams.get("itineraryId");
 
-  // Fetch itinerary using TanStack Query
   const {
     data: itinerary,
     isLoading,
@@ -34,117 +48,167 @@ export default function PreviewPage() {
     queryKey: ["itinerary", params.id],
     queryFn: () => fetchItinerary(params.id),
     enabled: !!params.id,
-    // onSuccess: (data) => {
-    //   // Cache itinerary in localStorage for offline access
-    //   localStorage.setItem('cachedItinerary', JSON.stringify(data));
-    // },
   });
 
-  // Load cached itinerary if offline
-  // useEffect(() => {
-  //   if (!itinerary && !isLoading && !error && typeof window !== 'undefined') {
-  //     const cached = localStorage.getItem('cachedItinerary');
-  //     if (cached) {
-  //       // No need to set state since we're using TanStack Query
-  //       console.log('Loaded cached itinerary');
-  //     }
-  //   }
-  // }, [itinerary, isLoading, error]);
-
-  // if (!params.id) {
-  //   router.push("/preferences");
-  //   return null;
-  // }
-
-  if (isLoading) {
-    return <div className="text-typography-950">Loading...</div>;
-  }
-
-  if (error) {
-    return <div className="text-error-500">Error: {error.message}</div>;
-  }
-
+  if (isLoading) return <LoadingSkeleton />;
+  if (error) return <ErrorDisplay error={error} router={router} />;
   if (!itinerary) {
     router.push("/preferences/create");
     return null;
   }
 
-  const handleEditPlan = () => {
-    router.push(`/plan/${itinerary.id}`);
-  };
-
-  const handleItemClick = (placeId: string) => {
-    router.push(`/plan/${itinerary.id}/item/${placeId}`);
-  };
-  console.log(itinerary);
+  // const handleEditPlan = () => router.push(`/plan/${itinerary.id}`);
+  // const handleItemClick = (placeId: string) =>
+  //   router.push(`/plan/${itinerary.id}/item/${placeId}`);
 
   return (
-    <div className="flex flex-col min-h-screen bg-background-50 p-4">
-      <h1 className="text-2xl text-typography-950 mb-4">{itinerary.title}</h1>
-      <ProgressBar progress={100} />
-      <Card className="bg-secondary-200 mb-6">
-        <CardHeader>
-          <CardTitle className="text-typography-950">
-            Itinerary Preview
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p className="text-typography-950 mb-2">
-            Duration: {itinerary.duration} Day
-            {itinerary.duration > 1 ? "s" : ""}
-          </p>
-          <p className="text-typography-950 mb-4">
-            Explore Bagan’s ancient wonders!
-          </p>
-          <div className="">
-            {itinerary?.data.items.map((item: ItineraryItem) => (
-              <Card
-                key={item.placeId}
-                className="bg-background-50 border-outline-500 cursor-pointer hover:bg-secondary-100"
-                onClick={() => handleItemClick(item.placeId)}
-              >
-                <CardContent className="p-4">
-                  <div className="flex items-center space-x-4">
-                    <ImageIcon className="text-primary-500 w-12 h-12" />
-                    <div>
-                      <h3 className="text-lg text-typography-950 font-semibold">
-                        {item.name}
-                      </h3>
-                      <p className="text-typography-700 text-sm">
-                        {item.description}
-                      </p>
-                      <div className="flex items-center space-x-2 mt-1">
-                        <Clock className="text-info-500 w-4 h-4" />
-                        <span className="text-typography-950 text-sm">
-                          {item.time}
-                        </span>
+    <Layout>
+      {/* Header Section */}
+      <div className="my-8">
+        <div className="flex justify-between items-center">
+          <div className="flex gap-4">
+            <h1 className="text-3xl font-bold text-typography-950 mb-2">
+              {itinerary.data.title}
+            </h1>
+          </div>
+          <UserButton />
+        </div>
+        <div className="flex gap-4 mb-4">
+          <Badge variant="secondary" className="gap-2">
+            <Calendar size={16} />
+            {itinerary.data.duration} Day
+            {itinerary.data.duration > 1 ? "s" : ""}
+          </Badge>
+          {/* <Badge variant="secondary" className="gap-2">
+            <Users size={16} />
+            {itinerary.data.days.length} Stops
+          </Badge> */}
+        </div>
+
+        <Separator className="my-4" />
+      </div>
+      <Button variant="ghost" onClick={() => router.back()}>
+        <ArrowLeft className="mr-2 h-4 w-4" />
+        Back
+      </Button>
+
+      {/* Itinerary Days */}
+      <div className="space-y-6">
+        {itinerary.data.days.map((day) => (
+          <Card key={day.day} className="border-none shadow-none">
+            <CardHeader className="pb-2 px-0">
+              <div className="flex w-full min-w-full justify-between items-center">
+                <h2 className="text-lg text-start font-semibold uppercase tracking-wider text-gray-500">
+                  DAY {day.day}
+                </h2>
+                {/* Weather placeholder - you would integrate real weather data */}
+                <div className="flex items-center gap-2 text-sm text-gray-500">
+                  <Sun className="text-yellow-400" size={16} />
+                  <span>Sunny, 24°C</span>
+                </div>
+              </div>
+            </CardHeader>
+
+            <CardContent className="p-0">
+              {day.items.map((item) => (
+                <div
+                  key={item.placeId}
+                  className="flex gap-4 py-4 hover:bg-gray-50 cursor-pointer"
+                  onClick={() => console.log("click")}
+                >
+                  <div className="w-16 h-16 bg-gray-200 rounded-lg flex items-center justify-center">
+                    <MapPin className="text-gray-400" size={24} />
+                  </div>
+
+                  <div className="flex-1">
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <h3 className="font-bold text-lg">{item.name}</h3>
+                        <p className="text-gray-600">{item.description}</p>
                       </div>
-                      <div className="flex items-center space-x-2 mt-1">
-                        <MapPin className="text-info-500 w-4 h-4" />
-                        <span className="text-typography-950 text-sm">
-                          {item.coordinates.latitude.toFixed(4)}°N,{" "}
-                          {item.coordinates.longitude.toFixed(4)}°E
-                        </span>
+                      <ChevronRight className="text-gray-400" />
+                    </div>
+
+                    <div className="flex gap-4 mt-2 text-sm text-gray-500">
+                      <div className="flex items-center gap-1">
+                        <Clock size={14} />
+                        <span>{item.time}</span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <MapPin size={14} />
+                        <a
+                          href={`https://www.google.com/maps?q=${item.coordinates?.latitude},${item.coordinates?.longitude}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          {item.coordinates?.latitude.toFixed(2)}°N,{" "}
+                          {item.coordinates?.longitude.toFixed(2)}°E
+                        </a>
                       </div>
                     </div>
                   </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-          <div className="mt-6 h-64 bg-secondary-200 rounded-md flex items-center justify-center">
-            <p className="text-typography-950">
-              Map Preview (Integrate Leaflet or similar API)
-            </p>
-          </div>
-        </CardContent>
-      </Card>
-      <Button
-        onClick={handleEditPlan}
-        className="bg-primary-500 text-typography-white hover:bg-primary-600"
-      >
-        Edit Plan
-      </Button>
+                </div>
+              ))}
+            </CardContent>
+            <Separator className="" />
+          </Card>
+        ))}
+      </div>
+
+      <div className="mt-8 flex justify-center gap-4">
+        <Button variant="outline" onClick={() => router.back()}>
+          <ArrowLeft className="mr-2 h-4 w-4" />
+          Back
+        </Button>
+      </div>
+    </Layout>
+  );
+}
+
+function LoadingSkeleton() {
+  return (
+    <div className="container mx-auto py-8 max-w-3xl">
+      <Skeleton className="h-8 w-64 mb-4" />
+      <div className="flex gap-4 mb-6">
+        <Skeleton className="h-6 w-24" />
+        <Skeleton className="h-6 w-24" />
+      </div>
+      <Separator className="my-4" />
+
+      {[...Array(3)].map((_, i) => (
+        <div key={i} className="mb-8">
+          <Skeleton className="h-6 w-32 mb-4" />
+          {[...Array(2)].map((_, j) => (
+            <div key={j} className="flex gap-4 mb-4">
+              <Skeleton className="h-16 w-16 rounded-lg" />
+              <div className="flex-1 space-y-2">
+                <Skeleton className="h-5 w-3/4" />
+                <Skeleton className="h-4 w-full" />
+                <Skeleton className="h-4 w-1/2" />
+              </div>
+            </div>
+          ))}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function ErrorDisplay({ error, router }) {
+  return (
+    <div className="container mx-auto py-8 text-center">
+      <div className="bg-error-50 p-6 rounded-lg max-w-md mx-auto">
+        <h2 className="text-xl font-bold text-error-600 mb-2">
+          Error Loading Itinerary
+        </h2>
+        <p className="text-error-500 mb-4">{error.message}</p>
+        <Button
+          variant="outline"
+          onClick={() => router.push("/preferences/create")}
+        >
+          Back to Preferences
+        </Button>
+      </div>
     </div>
   );
 }

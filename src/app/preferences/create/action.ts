@@ -3,6 +3,7 @@
 import axios from "axios";
 import { Preferences } from "@/lib/types";
 import { auth } from "@clerk/nextjs/server";
+import { redirect } from "next/navigation";
 
 const base_url = process.env.BASE_URL;
 export async function generateItinerary(preferences: Preferences) {

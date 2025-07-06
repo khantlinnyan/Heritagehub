@@ -11,7 +11,7 @@ export default function Header({
   return (
     <header className="flex items-center justify-between">
       <nav className="">
-        <h1 className="text-primary/80 text-xl lg:text-2xl font-semibold">
+        <h1 className="text-2xl md:text-3xl font-bold text-typography-950 mb-2">
           {title}
         </h1>
         <p className="text-muted-foreground">{subtitle}</p>

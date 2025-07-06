@@ -33,6 +33,8 @@ import {
 } from "@/lib/form-constant";
 import { Separator } from "@/components/ui/separator";
 import { Label } from "@/components/ui/label";
+import Layout from "@/components/layout";
+import BeatLoader from "react-spinners/BeatLoader";
 
 const schema = z.object({
   duration: z.number().min(1).max(14),
@@ -107,10 +109,13 @@ export default function PrefForm() {
       setPreferences(data);
       console.log(data);
       const response = await generateItinerary(data);
-      console.log(response);
+      console.log(response.data.data.id);
       if (response.success) {
-        setItinerary(response.data);
-        // router.push(`/plan/${response.data.id}`);
+        setItinerary(response.data.data.items);
+        {
+          response.data.data.id &&
+            router.push(`/plan/${response.data.data.id}`);
+        }
       } else {
         alert(response.error || "Failed to generate itinerary");
       }
@@ -135,17 +140,8 @@ export default function PrefForm() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-background-50 p-4 md:p-8 max-w-4xl mx-auto">
-      <header className="mb-6">
-        <h1 className="text-2xl md:text-3xl font-bold text-typography-950 mb-2">
-          Plan Your Myanmar Journey
-        </h1>
-        <p className="text-typography-700">
-          Tell us your preferences and we'll create a personalized itinerary
-        </p>
-      </header>
-
-      <ProgressBar progress={progress} className="mb-6" />
+    <Layout className="pb-20">
+      <ProgressBar progress={progress} />
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         <Accordion
@@ -300,16 +296,16 @@ export default function PrefForm() {
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-6">
           <Button
             type="submit"
-            className="bg-amber-500 hover:bg-amber-600 text-white px-8 py-3 text-lg w-full sm:w-auto transition-colors shadow-md"
+            className=" text-white px-8 py-3 text-lg w-full sm:w-auto transition-colors shadow-md"
             disabled={progress < 50 || isSubmitting}
           >
             {isSubmitting ? (
               <span className="flex items-center gap-2">
-                <Loader2 className="h-4 w-4 animate-spin" />
+                <BeatLoader />
                 Creating...
               </span>
             ) : (
-              "Generate My Itinerary"
+              "Generate Plan"
             )}
             {progress < 50 && (
               <span className="ml-2 text-sm font-normal">
@@ -319,6 +315,6 @@ export default function PrefForm() {
           </Button>
         </div>
       </form>
-    </div>
+    </Layout>
   );
 }

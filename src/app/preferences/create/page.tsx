@@ -5,7 +5,10 @@ import Header from "@/components/ui/header";
 export default function CreatePreference() {
   return (
     <Layout>
-      <Header title="Create a new plan" subtitle="Plan your next adventure" />
+      <Header
+        title="Create a new plan"
+        subtitle="Plan your Myanmar adventure"
+      />
       <PrefForm />
     </Layout>
   );

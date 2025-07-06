@@ -6,5 +6,9 @@ export default function Layout({
   children: React.ReactNode;
   className?: string;
 }) {
-  return <main className={cn("px-4 py-6", className)}>{children}</main>;
+  return (
+    <main className={cn("container mx-auto px-6 py-20 max-w-4xl", className)}>
+      {children}
+    </main>
+  );
 }

@@ -7,11 +7,7 @@ import {
   Clock,
   ChevronRight,
   Sun,
-  Cloud,
-  Waves,
-  Wind,
   Calendar,
-  Users,
   ArrowLeft,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -22,13 +18,15 @@ import {
   CardTitle,
   CardFooter,
 } from "@/components/ui/card";
-import { ProgressBar } from "@/components/atoms/progressbar";
+// import { ProgressBar } from "@/components/atoms/progressbar";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import Layout from "@/components/layout";
-import Header from "@/components/ui/header";
+// import Header from "@/components/ui/header";
 import { UserButton } from "@clerk/nextjs";
+import Image from "next/image";
+import { getDirectImageUrl } from "@/lib/utils";
 
 async function fetchItinerary(id: string) {
   const response = await fetch(`http://localhost:8080/api/v1/plan/${id}`);
@@ -116,9 +114,15 @@ export default function CruiseStyleItinerary() {
                   className="flex gap-4 py-4 hover:bg-gray-50 cursor-pointer"
                   onClick={() => console.log("click")}
                 >
-                  <div className="w-16 h-16 bg-gray-200 rounded-lg flex items-center justify-center">
-                    <MapPin className="text-gray-400" size={24} />
-                  </div>
+                  <Image
+                    src={item.photoUrl}
+                    alt={item.name}
+                    width={64}
+                    height={64}
+                    priority={true}
+                    quality={80}
+                    className="w-16 h-16 bg-gray-200 rounded-lg flex items-center justify-center"
+                  />
 
                   <div className="flex-1">
                     <div className="flex justify-between items-start">

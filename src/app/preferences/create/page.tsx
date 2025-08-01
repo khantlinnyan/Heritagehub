@@ -4,7 +4,7 @@ import Header from "@/components/ui/header";
 
 export default function CreatePreference() {
   return (
-    <Layout>
+    <Layout className="">
       <Header
         title="Create a new plan"
         subtitle="Plan your Myanmar adventure"

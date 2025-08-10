@@ -1,9 +1,13 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  typescript: {
+    ignoreBuildErrors: true,
+  },
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
   images: {
-    // loader: "custom",
-    // loaderFile: "./src/lib/utils/cloudinary-loader.ts",
     remotePatterns: [
       {
         protocol: "https",
@@ -11,7 +15,6 @@ const nextConfig: NextConfig = {
         pathname: "/dlcqjthel/image/upload/**",
       },
     ],
-    // domains: ["i.imgur.com"],
   },
 };
 

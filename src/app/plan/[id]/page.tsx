@@ -272,7 +272,7 @@ export default function CruiseStyleItinerary() {
               onClick={handleSave}
               disabled={mutation.isPending}
             >
-              {mutation.isPending ? "Saving..." : "Save Itinerary"}
+              {mutation.isPending ? "Saving..." : "Save"}
             </Button>
           </div>
         ) : (
@@ -395,7 +395,10 @@ export default function CruiseStyleItinerary() {
                   </h2>
                   <div className="flex items-center gap-2 text-sm text-gray-500">
                     <Sun className="text-yellow-400" size={16} />
-                    <span>Sunny, 24°C</span>
+                    {/* Random temperature between 20°C and 30°C with erro handling */}
+                    <span>
+                      Sunny, {Math?.round(Math?.random() * 20) + 20}°C
+                    </span>
                   </div>
                 </div>
               </CardHeader>

@@ -7,7 +7,7 @@ export default function Layout({
   className?: string;
 }) {
   return (
-    <main className={cn("container mx-auto px-6 py-10 max-w-4xl", className)}>
+    <main className={cn("container mx-auto px-4 py-10 max-w-4xl", className)}>
       {children}
     </main>
   );

@@ -4,6 +4,7 @@ import axios from "axios";
 import { ItineraryItem } from "@/lib/types";
 import { auth } from "@clerk/nextjs/server";
 
+const base_url = process.env.NEXT_PUBLIC_BASE_URL;
 export async function fetchItinerary(id: string) {
   try {
     const { userId } = await auth();
@@ -11,7 +12,7 @@ export async function fetchItinerary(id: string) {
     if (!userId) {
       throw new Error("No authentication token found");
     }
-    const response = await fetch(`http://localhost:8080/api/v1/plan/${id}`, {
+    const response = await fetch(`${base_url}/plan/${id}`, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${userId}`,
@@ -27,10 +28,7 @@ export async function fetchItinerary(id: string) {
 
 export async function saveItinerary(id: string, items: ItineraryItem[]) {
   try {
-    const response = await axios.patch(
-      `http://localhost:8080/api/v1/plan/${id}`,
-      { items }
-    );
+    const response = await axios.patch(`${base_url}/plan/${id}`, { items });
     return { success: true, data: response.data };
   } catch (error) {
     console.error("Error saving itinerary:", error);

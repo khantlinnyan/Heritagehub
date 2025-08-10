@@ -39,9 +39,11 @@ import { Switch } from "@/components/ui/switch";
 import { Tooltip } from "@/components/ui/tooltip";
 import { fetchItinerary } from "./action";
 
+const base_url = process.env.NEXT_PUBLIC_BASE_URL;
+
 // Updated API call to send the entire itinerary object
 async function updateItinerary(id: string, itinerary: any) {
-  const response = await fetch(`http://localhost:8080/api/v1/plan/${id}`, {
+  const response = await fetch(`${base_url}/plan/${id}`, {
     method: "PATCH",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(itinerary),
@@ -170,7 +172,7 @@ export default function CruiseStyleItinerary() {
     if (dayToAddTo !== null) {
       const newItem = {
         ...place,
-        id: place.id || nanoid(),
+        id: place.id,
         time: "",
         notes: "",
       };

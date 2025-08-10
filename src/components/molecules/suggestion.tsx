@@ -3,6 +3,8 @@
 import Image from "next/image";
 import { Card, CardFooter } from "../ui/card";
 import { useRef, useState, useEffect } from "react";
+import { CldImage } from "next-cloudinary";
+import { useRouter } from "next/navigation";
 
 interface Place {
   id: string;
@@ -16,6 +18,8 @@ const Suggestion = ({ places }: { places: Place[] }) => {
   const [isDragging, setIsDragging] = useState(false);
   const [startX, setStartX] = useState(0);
   const [scrollLeft, setScrollLeft] = useState(0);
+  const router = useRouter();
+  console.log(places.map((i) => i.photoUrl));
 
   // Touch event handlers
   const handleTouchStart = (e: React.TouchEvent) => {
@@ -56,6 +60,10 @@ const Suggestion = ({ places }: { places: Place[] }) => {
     setIsDragging(false);
   };
 
+  const handleOnClick = (id: string) => {
+    router.push(`/place/${id}`);
+  };
+
   const handleMouseLeave = () => {
     setIsDragging(false);
   };
@@ -89,17 +97,30 @@ const Suggestion = ({ places }: { places: Place[] }) => {
         >
           {places.map((place) => (
             <Card
+              onClick={() => handleOnClick(place.id)}
               key={place.id}
               className="flex-shrink-0 w-[280px] border-hidden h-[280px] relative rounded-lg overflow-hidden group"
             >
               {/* Background Image */}
               <div className="absolute inset-0">
-                <Image
+                {/* <Image
                   src={place.photoUrl}
                   alt={place.name}
                   fill
+                  priority
+                  quality={60}
+                  // loader={cloudinaryLoader}
+                  // unoptimized
                   className="object-cover transition-transform duration-300 group-hover:scale-105"
-                  unoptimized
+                /> */}
+                <CldImage
+                  width={720}
+                  height={720}
+                  src={place.photoUrl} // Use the public ID here
+                  alt={place.name}
+                  crop="fill" // You can add transformations as props
+                  gravity="auto" // For smart cropping
+                  quality={60}
                 />
                 {/* Gradient Overlay */}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-transparent" />

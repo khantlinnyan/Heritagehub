@@ -1,22 +1,14 @@
 // lib/form-constants.ts
-export const REGIONS = [
-  "Bagan",
-  "Mandalay",
-  "Mrauk U",
-  "Inwa",
-  "Yangon",
-  "Shan State",
-  "Bago",
-] as const;
+export const REGIONS = ["Bagan", "Mandalay", "Hpa An"] as const;
 
 export const HISTORICAL_INTERESTS = [
   "Pagan Empire",
-  "Mon & Pyu",
+  // "Ancient Monuments",
   "Buddhist Art",
 ] as const;
 
 // export const FESTIVALS = ["Thingyan", "Tazaungdaing", "Phaya Ngai"] as const;
-export const ACTIVITIES = ["Hot air balloon", "Cycling"] as const;
+export const ACTIVITIES = ["Hot air balloon", "Cycling", "Hiking"] as const;
 // export const TRANSPORT_OPTIONS = [
 //   "Private car",
 //   "Bus",
@@ -44,7 +36,7 @@ export const MONTHS = [
   "December",
 ] as const;
 
-export const DURATION_OPTIONS = Array.from({ length: 14 }, (_, i) => ({
+export const DURATION_OPTIONS = Array.from({ length: 5 }, (_, i) => ({
   value: (i + 1).toString(),
   label: `${i + 1} Day${i > 0 ? "s" : ""}`,
 }));

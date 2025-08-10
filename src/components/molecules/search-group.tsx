@@ -1,7 +1,8 @@
 "use client";
 import { useQuery } from "@tanstack/react-query";
 import SearchComponent from "../atoms/search";
-import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { CldImage } from "next-cloudinary";
 const base_url = process.env.NEXT_PUBLIC_BASE_URL;
 
 async function fetchPlaces() {
@@ -11,45 +12,37 @@ async function fetchPlaces() {
 }
 
 const SearchGroup = () => {
+  const router = useRouter();
   const { data, isLoading, error } = useQuery({
     queryKey: ["places"],
     queryFn: () => fetchPlaces(),
   });
   console.log(data);
-  const products = [
-    {
-      id: 1,
-      image: "https://example.com/product1.jpg",
-      title: "Wireless Headphones",
-      description: "Noise cancelling over-ear headphones",
-      price: 199.99,
-      category: "Audio",
-    },
-    {
-      id: 2,
-      image: "https://example.com/product2.jpg",
-      title: "Smart Watch",
-      description: "Fitness tracker with heart rate monitor",
-      price: 159.99,
-      category: "Wearables",
-    },
-    // More items...
-  ];
-  const handleSelect = (product) => {
-    console.log("Selected product:", product);
+
+  const handleSelect = (product: any) => {
+    router.push(`/place/${product.id}`);
   };
 
-  const renderProduct = (product) => (
+  const renderProduct = (product: any) => (
     <div className="flex items-center p-3 hover:bg-gray-100 cursor-pointer">
       <div className="w-12 h-12 rounded-md overflow-hidden mr-3 bg-gray-200">
         {product.photoUrl && (
-          <Image
-            quality={50}
+          // <Image
+          //   quality={50}
+          //   width={60}
+          //   height={60}
+          //   src={product.photoUrl}
+          //   alt={product.name}
+          //   className="w-full h-full object-cover"
+          // />
+          <CldImage
             width={60}
             height={60}
-            src={product.photoUrl}
+            src={product.photoUrl} // Use the public ID here
             alt={product.name}
-            className="w-full h-full object-cover"
+            crop="fill"
+            gravity="auto"
+            quality={40}
           />
         )}
       </div>
@@ -65,7 +58,7 @@ const SearchGroup = () => {
     <SearchComponent
       data={data?.data}
       onSelect={handleSelect}
-      placeholder="Places to go, hotels, things to do..."
+      placeholder="Places to go, things to do..."
       searchKeys={["title", "description", "category"]}
       renderItem={renderProduct}
     />

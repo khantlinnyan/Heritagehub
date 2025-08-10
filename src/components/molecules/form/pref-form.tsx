@@ -37,6 +37,7 @@ import Layout from "@/components/layout";
 import BeatLoader from "react-spinners/BeatLoader";
 
 const schema = z.object({
+  regions: z.string().min(1, "Please enter a region"),
   duration: z.number().min(1).max(14),
   travelMonth: z.string().min(1, "Please select a month"),
   historicalInterests: z.array(z.string()).optional(),
@@ -69,8 +70,8 @@ export default function PrefForm() {
     setValue,
   } = useForm<z.infer<typeof schema>>({
     defaultValues: {
-      regions: ["Bagan"],
-      duration: 7,
+      regions: "",
+      duration: 1,
       travelMonth: "",
       historicalInterests: [],
       sitePreference: "iconic",
@@ -99,7 +100,7 @@ export default function PrefForm() {
         if (typeof value === "boolean") return value;
         return false;
       }).length /
-        9) *
+        8) *
         100
     )
   );
@@ -157,6 +158,17 @@ export default function PrefForm() {
             className="bg-white rounded-xl shadow-sm border border-gray-200"
           >
             <div className="space-y-6">
+              <SelectField
+                options={REGIONS.map((region) => ({
+                  value: region,
+                  label: region,
+                }))}
+                value={formValues.regions}
+                onChange={(value) => setValue("regions", value)}
+                label="Where are you visiting? *"
+                placeholder="Select region"
+                className="w-full"
+              />
               <SelectField
                 options={DURATION_OPTIONS}
                 value={formValues.duration.toString()}
